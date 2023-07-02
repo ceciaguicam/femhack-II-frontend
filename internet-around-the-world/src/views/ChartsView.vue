@@ -1,7 +1,26 @@
 <template>
     <div>
-        <AllCountriesGraphic :graphic_options=all_countries_chart_info.options
-            :graphic_series=all_countries_chart_info.series></AllCountriesGraphic>
+        <h1>Internet around the world</h1>
+        <div>
+            <h3>Internet users year by year</h3>
+            <AllCountriesGraphic :graphic_options=all_countries_chart_info.options
+                :graphic_series=all_countries_chart_info.series></AllCountriesGraphic>
+        </div>
+        <div>
+            <h3>Users by year and country</h3>
+            <el-form label-width="auto" label-position="right">
+            <MultiselectFilter :select_info="years_select_info" filter_name="Select a year" filter_text="Year">
+            </MultiselectFilter>
+        </el-form>
+            <!-- <el-form label-width="auto" label-position="right">
+                    <MultiselectFilter :select_info="countries" filter_name="Select a country"
+                        filter_text="Country">
+                    </MultiselectFilter>
+
+                    
+                </el-form> -->
+        </div>
+
     </div>
 </template>
     
@@ -9,13 +28,10 @@
 import { defineComponent, type Ref, ref } from 'vue';
 import FemHackAPI from "@/api/femHackApi";
 import AllCountriesGraphic from "@/components/AllCountriesGraphic.vue"
+import MultiselectFilter from '@/components/MultiselectFilter.vue';
+import years_select_info from '@/data/years_select_info.json'
 
-type TotalUsersResponse = {
-    Message: string
-    Data: {
-        Total: number
-    }
-}
+
 
 type AllCountriesChartInfo = {
     options: {
@@ -35,32 +51,27 @@ type AllCountriesChartInfo = {
 
 }
 
-/* data: function () {
-        return {
-            options: {
-                chart: {
-                    id: 'vuechart-example'
-                },
-                xaxis: {
-                    categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-                }
-            },
-            series: [{
-                name: 'series-1',
-                data: [30, 40, 45, 50, 49, 60, 70, 91]
-            }]
-        }*/
+type SelectInfo = {
+    values: Array<any>,
+    options: Array<{
+        label: string,
+        value: any,
+    }>,
+}
 
 export default defineComponent({
     name: 'ChartsView',
     components: {
-        AllCountriesGraphic
+        AllCountriesGraphic,
+        MultiselectFilter
 
     },
     props: {
 
     },
     setup() {
+
+        console.log("Years", years_select_info)
 
         const all_countries_chart_info: Ref<AllCountriesChartInfo> = ref({
             options: {
@@ -78,16 +89,6 @@ export default defineComponent({
                 }
             ]
         })
-
-        /*  async function getAllCountriesGraphicData() {
-             for (let year = 1980; year <= 2020; year++) {
-                 const response = await FemHackAPI.getUsersByYear(year)
-                 users_by_year.value = response.Data.Total
-                 console.log("Usuarios", year, users_by_year.value)
- 
-             }
- 
-         } */
 
         async function getAllCountriesGraphicData() {
             let year = 1980;
@@ -112,35 +113,24 @@ export default defineComponent({
             }, 500);
         }
 
-         /* data: function () {
-        return {
-            options: {
-                chart: {
-                    id: 'vuechart-example'
-                },
-                xaxis: {
-                    categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-                }
-            },
-            series: [{
-                name: 'series-1',
-                data: [30, 40, 45, 50, 49, 60, 70, 91]
-            }]
-        }*/
-
-        // Llamar a la función getAllCountriesGraphicData() cada medio segundo
         getAllCountriesGraphicData()
 
-        /* Data
-        :
-        { Total: 390573195 }
-        Message
-        :
-        "Total Internet users in Year 2000" */
+        const countries: Ref<String[]> = ref([""])
 
+        async function getCountries() {
+            const response = await FemHackAPI.getCountries()
+            const list_of_countries = Object.values(response.Countries)
+            console.log("Lista", list_of_countries)
+            countries.value = list_of_countries
+            console.log(countries.value)
+        }
+
+        getCountries()
 
         return {
-            all_countries_chart_info
+            all_countries_chart_info,
+            countries,
+            years_select_info
         }
     }
 });

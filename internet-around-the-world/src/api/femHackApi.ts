@@ -9,10 +9,10 @@ type TotalUsers = {
     }
 }
 
-type Countries = [
-    string
-]
-
+type CountriesResponse = {
+    Message: string
+    Countries: [string]
+}
 
 class FemHackAPI {
     api: AxiosInstance;
@@ -25,6 +25,19 @@ class FemHackAPI {
 
     async getUsersByYear(year: number): Promise<TotalUsers> {
         const response = await this.api.get(`/internet-users/${year}`).catch((error) => {
+            return error.response;
+        });
+
+        switch (response.status) {
+            case 200:
+                return response.data;
+            default:
+                throw new Error(response.data.detail);
+        }
+    }
+
+    async getCountries(): Promise<CountriesResponse> {
+        const response = await this.api.get(`/countries`).catch((error) => {
             return error.response;
         });
 
