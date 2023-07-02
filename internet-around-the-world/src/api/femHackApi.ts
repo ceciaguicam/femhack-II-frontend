@@ -9,6 +9,10 @@ type TotalUsers = {
     }
 }
 
+type Countries = [
+    string
+]
+
 
 class FemHackAPI {
     api: AxiosInstance;
@@ -20,6 +24,19 @@ class FemHackAPI {
     }
 
     async getUsersByYear(year: number): Promise<TotalUsers> {
+        const response = await this.api.get(`/internet-users/${year}`).catch((error) => {
+            return error.response;
+        });
+
+        switch (response.status) {
+            case 200:
+                return response.data;
+            default:
+                throw new Error(response.data.detail);
+        }
+    }
+
+   /*  async getCountries(): Promise<Countries> {
         console.log("Entra en la función")
         const response = await this.api.get(`/internet-users/${year}`).catch((error) => {
             console.log("Hace la petición")
@@ -32,7 +49,7 @@ class FemHackAPI {
             default:
                 throw new Error(response.data.detail);
         }
-    }
+    } */
 
 }
 
