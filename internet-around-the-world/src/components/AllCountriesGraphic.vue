@@ -1,8 +1,14 @@
 <template>
     <div>
+        <h1>Internet around the World</h1>
         <div>
-            <apexchart width="500" type="line" :options="graphic_options" :series="graphic_series"></apexchart>
+            <h3>Amount of users year by year</h3>
+            <apexchart width="800" type="line" :options="graphic_options" :series="graphic_series"></apexchart>
         </div>
+        <div>
+            <h3>Amount of users in each country</h3>
+        </div>
+        
     </div>
 </template>
     

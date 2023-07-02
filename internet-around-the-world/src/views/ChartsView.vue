@@ -1,6 +1,5 @@
 <template>
     <div>
-        <button>Prueba</button>
         <AllCountriesGraphic :graphic_options=all_countries_chart_info.options
             :graphic_series=all_countries_chart_info.series></AllCountriesGraphic>
     </div>
@@ -61,7 +60,7 @@ export default defineComponent({
     props: {
 
     },
-    setup(props) {
+    setup() {
 
         const all_countries_chart_info: Ref<AllCountriesChartInfo> = ref({
             options: {
@@ -80,24 +79,6 @@ export default defineComponent({
             ]
         })
 
-
-        /* data: function () {
-        return {
-            options: {
-                chart: {
-                    id: 'vuechart-example'
-                },
-                xaxis: {
-                    categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-                }
-            },
-            series: [{
-                name: 'series-1',
-                data: [30, 40, 45, 50, 49, 60, 70, 91]
-            }]
-        }*/
-        const users_by_year: Ref<Number | undefined> = ref()
-
         /*  async function getAllCountriesGraphicData() {
              for (let year = 1980; year <= 2020; year++) {
                  const response = await FemHackAPI.getUsersByYear(year)
@@ -113,8 +94,15 @@ export default defineComponent({
 
             const interval = setInterval(async () => {
                 const response = await FemHackAPI.getUsersByYear(year);
-                users_by_year.value = response.Data.Total;
-                console.log("Usuarios en", year, ":", users_by_year.value);
+                const users_by_year = response.Data.Total;
+                console.log("Usuarios en", year, ":", users_by_year);
+
+                all_countries_chart_info.value.options.xaxis.categories.push(year)
+                all_countries_chart_info.value.series[0].data.push(users_by_year)
+
+                console.log("All countries info", all_countries_chart_info.value)
+
+
 
                 year++;
 
@@ -123,6 +111,22 @@ export default defineComponent({
                 }
             }, 500);
         }
+
+         /* data: function () {
+        return {
+            options: {
+                chart: {
+                    id: 'vuechart-example'
+                },
+                xaxis: {
+                    categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+                }
+            },
+            series: [{
+                name: 'series-1',
+                data: [30, 40, 45, 50, 49, 60, 70, 91]
+            }]
+        }*/
 
         // Llamar a la función getAllCountriesGraphicData() cada medio segundo
         getAllCountriesGraphicData()
